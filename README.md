@@ -67,6 +67,11 @@ Python3が入ってれば多分動きます.
 
 <br>
 
+![demo](./demo.gif)
+
+
+<br>
+
 ## Auto Start Settings
 
 `setup.py` では ↓ を実行してます.
