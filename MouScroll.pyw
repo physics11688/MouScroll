@@ -4,8 +4,6 @@ from subprocess import run
 import pyautogui as pg  # キーボード操作用。主にホットキー。
 import pygetwindow as gw  # ActiveWindows取得とかに使う
 
-move_desktop = False
-
 # -------------------- キーボードの操作 -------------------- #
 
 # -------------------- マウスの操作  -------------------- #
@@ -16,7 +14,7 @@ wheel = 0  # 検索用のホイールカウンタ
 LEFT_RANGE = int(pg.size().width * 5 / 100)  # 画面左側5%
 RIGHT_RANGE = int(pg.size().width * 95 / 100)  # 画面右側5%
 TOP_RANGE = int(pg.size().height * 5 / 100)  # 画面上側5%
-DOWN_RANGE = int(pg.size().height * 95 / 100)  # 画面下側5%
+BOTTOM_RANGE = int(pg.size().height * 95 / 100)  # 画面下側5%
 
 # https://pyautogui.readthedocs.io/en/latest/mouse.html
 # 0,0       X increases -->
@@ -71,7 +69,7 @@ def on_scroll(x, y, dx, dy) -> None:
             else:  # タスク切換えウィンドウが出てないなら
                 pg.hotkey('ctrl', 'alt', 'tab')  # タスク切換え
         # デスクトップの表示
-        elif (x < LEFT_RANGE) and (y > DOWN_RANGE):  # カーソルが ↙
+        elif (x < LEFT_RANGE) and (y > BOTTOM_RANGE):  # カーソルが ↙
             # アクティブウィンドウがないなら
             current_HWND = gw.getActiveWindow()
             if (current_HWND is None) or (current_HWND.title == ""):
@@ -79,7 +77,7 @@ def on_scroll(x, y, dx, dy) -> None:
             else:  # あるならデスクトップ表示
                 pg.hotkey('win', 'd')  # 同時押し
         # 選択文字列で検索
-        elif (x > RIGHT_RANGE) and (y > DOWN_RANGE):  # カーソルが➘
+        elif (x > RIGHT_RANGE) and (y > BOTTOM_RANGE):  # カーソルが➘
             if wheel >= 5:
                 pg.hotkey('ctrl', 'c')
                 args = "microsoft-edge:https://www.google.co.jp/search?q=" + get_Clip()
@@ -104,13 +102,13 @@ def on_scroll(x, y, dx, dy) -> None:
                 pg.hotkey('ctrl', 'alt', 'tab')  # タスク切換え
 
         # アプリの表示
-        elif (x < LEFT_RANGE) and (y > DOWN_RANGE):  # カーソルが ↙
+        elif (x < LEFT_RANGE) and (y > BOTTOM_RANGE):  # カーソルが ↙
             # アクティブウィンドウないならタスク表示
             if gw.getActiveWindow().title == "":
                 pg.hotkey('win', 'd')  # 同時押し
 
         # 選択文字列でプライベート検索
-        elif (x > RIGHT_RANGE) and (y > DOWN_RANGE):  # カーソルが➘
+        elif (x > RIGHT_RANGE) and (y > BOTTOM_RANGE):  # カーソルが➘
             if wheel >= 4:
                 pg.hotkey('ctrl', 'c')
                 args = "microsoft-edge:https://www.google.co.jp/search?q=" + get_Clip()

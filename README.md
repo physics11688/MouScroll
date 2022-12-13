@@ -48,7 +48,10 @@ Python3が入ってれば多分動きます.
 # 移動
 > cd MouScroll
 
-# セットアップ
+# １回使用するだけ
+> python MouScroll.pyw
+
+# セットアップして継続的に使う(自動起動する)なら
 > python setup.py
 
 ```
