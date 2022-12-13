@@ -112,6 +112,8 @@ cmd = [
     "schtasks.exe",
     "-Verb",
     "RunAs",
+    "-WindowStyle",
+    "Hidden",
     "-ArgumentList",
     f'"/Create /TN StartMouScroll /XML {path_to_XML}"'  # 新しくプロセス起動してるので絶対パス
 ]

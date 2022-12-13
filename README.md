@@ -55,6 +55,19 @@ Python3が入ってれば多分動きます.
 
 <br>
 
+## Uninstall
+```bash
+# Windows
+> python uninstall.py
+
+# UNIX系
+$ python3 uninstall.py
+```
+
+<br>
+
+
+
 ## Usage
 
 画面四隅でホイールをくりくりしてください.
