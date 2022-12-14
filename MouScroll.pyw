@@ -10,7 +10,7 @@ from time import time
 # -------------------- マウスの操作  -------------------- #
 pg.FAILSAFE = False  # 画面端でも例外吐かないようにする
 pre_time = 0  # スクロール時間間隔用
-TIME_IV = 0.027  # 処理を飛ばす飛ばすスクロール時間間隔
+TIME_IV = 0.027  # 処理を飛ばすスクロール時間間隔
 
 # ホットスポット領域の境界座標
 LEFT_RANGE = int(pg.size().width * 5 / 100)  # 画面左側5%
@@ -29,6 +29,7 @@ BOTTOM_RANGE = int(pg.size().height * 95 / 100)  # 画面下側5%
 # |                           |
 # +---------------------------+ 1919, 1079
 
+# みんな大好き MicrosoftEdgeのパス
 PATH_TO_EDGE = "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe"
 
 
@@ -49,18 +50,18 @@ def on_scroll(x, y, dx, dy) -> None:
     """ マウスをスクロールした時呼ばれる関数
 
     Args:
-        x (_type_): マウスポインタのx座標
-        y (_type_): マウスポインタのy座標
-        dx (_type_): x軸方向のスクロール
-        dy (_type_): y軸方向のスクロール
+        x (int): マウスポインタのx座標
+        y (int): マウスポインタのy座標
+        dx (int): x軸方向のスクロール
+        dy (int): y軸方向のスクロール
     """
 
     global wheel
     global pre_time
 
-    if time() - pre_time < TIME_IV:
-        pre_time = time()
-        return
+    if time() - pre_time < TIME_IV:  # 前回の処理時間との差が短すぎるなら
+        pre_time = time()  # 時間だけ格納し直して
+        return  # 処理を飛ばす
 
     # 下にスクロール
     if (dy < 0):
@@ -85,7 +86,6 @@ def on_scroll(x, y, dx, dy) -> None:
                 pg.hotkey('win', 'd')  # 同時押し
         # 選択文字列で検索
         elif (x > RIGHT_RANGE) and (y > BOTTOM_RANGE):  # カーソルが➘
-
             pg.hotkey('ctrl', 'c')
             args = "microsoft-edge:https://www.google.co.jp/search?q=" + get_Clip()
             run([PATH_TO_EDGE, args])
@@ -123,7 +123,8 @@ def on_scroll(x, y, dx, dy) -> None:
 
 def on_click(x, y, button, pressed) -> None:
     """ カーソル ↖ でタスク切換え中にクリックでアプリ選択 """
-    if (x < LEFT_RANGE) and (y < TOP_RANGE) and ("タスクの切り替え" in gw.getAllTitles()):  # カーソルが ↖
+    isUpperLeft = (x < LEFT_RANGE) and (y < TOP_RANGE)
+    if isUpperLeft and ("タスクの切り替え" in gw.getAllTitles()):  # カーソルが ↖
         pg.keyDown('enter')
     return
 

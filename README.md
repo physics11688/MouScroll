@@ -48,8 +48,9 @@ Python3が入ってれば多分動きます.
 # 移動
 > cd MouScroll
 
-# １回使用するだけ
-> python MouScroll.pyw
+
+# 1回使用するだけ
+> python MouScroll.pyw  # ホントは python じゃなくて py の方が良いよね
 
 # セットアップして継続的に使う(自動起動する)なら
 > python setup.py
@@ -77,13 +78,21 @@ $ python3 uninstall.py
 
 意外と便利です.
 
+- 素早くホイールをスクロールした場合: 1回だけ処理を読み込みます
+
+- ゆっくりとスクロールした場合: リアルタイムな感じで処理を読み込みます
+
 <br>
 
-![pic](./pic.svg)
+↑ の感じを変更したい場合は [MouSCroll.pyw](./MouScroll.pyw)の変数 `TIME_IV` を調整してください.
 
 <br>
 
-![demo](./demo.gif)
+![pic](./pic/pic.svg)
+
+<br>
+
+![demo](./pic/demo.gif)
 
 
 <br>
