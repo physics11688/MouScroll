@@ -3,12 +3,14 @@ from win32clipboard import OpenClipboard, GetClipboardData, CloseClipboard, CF_U
 from subprocess import run
 import pyautogui as pg  # キーボード操作用。主にホットキー。
 import pygetwindow as gw  # ActiveWindows取得とかに使う
+from time import time
 
 # -------------------- キーボードの操作 -------------------- #
 
 # -------------------- マウスの操作  -------------------- #
 pg.FAILSAFE = False  # 画面端でも例外吐かないようにする
-wheel = 0  # 検索用のホイールカウンタ
+pre_time = 0  # スクロール時間間隔用
+TIME_IV = 0.027  # 処理を飛ばす飛ばすスクロール時間間隔
 
 # ホットスポット領域の境界座標
 LEFT_RANGE = int(pg.size().width * 5 / 100)  # 画面左側5%
@@ -54,6 +56,11 @@ def on_scroll(x, y, dx, dy) -> None:
     """
 
     global wheel
+    global pre_time
+
+    if time() - pre_time < TIME_IV:
+        pre_time = time()
+        return
 
     # 下にスクロール
     if (dy < 0):
@@ -65,7 +72,7 @@ def on_scroll(x, y, dx, dy) -> None:
         elif (x < LEFT_RANGE) and (y < TOP_RANGE):  # カーソルが ↖
             # 既にタスク切換えウィンドウが出てるなら
             if "タスクの切り替え" in gw.getAllTitles():
-                pg.keyDown('right')  # 右キーでタスク選択を移動
+                pg.keyDown('left')  # 右キーでタスク選択を移動
             else:  # タスク切換えウィンドウが出てないなら
                 pg.hotkey('ctrl', 'alt', 'tab')  # タスク切換え
         # デスクトップの表示
@@ -78,13 +85,10 @@ def on_scroll(x, y, dx, dy) -> None:
                 pg.hotkey('win', 'd')  # 同時押し
         # 選択文字列で検索
         elif (x > RIGHT_RANGE) and (y > BOTTOM_RANGE):  # カーソルが➘
-            if wheel >= 5:
-                pg.hotkey('ctrl', 'c')
-                args = "microsoft-edge:https://www.google.co.jp/search?q=" + get_Clip()
-                run([PATH_TO_EDGE, args])
-                wheel = 0
-            else:
-                wheel += 1
+
+            pg.hotkey('ctrl', 'c')
+            args = "microsoft-edge:https://www.google.co.jp/search?q=" + get_Clip()
+            run([PATH_TO_EDGE, args])
 
     # 上にスクロール
     else:
@@ -97,7 +101,7 @@ def on_scroll(x, y, dx, dy) -> None:
             # 既にタスク切換えウィンドウが出てるなら
             if "タスクの切り替え" in gw.getAllTitles():
                 #  左キーでタスク選択を移動
-                pg.keyDown('left')
+                pg.keyDown('right')
             else:  # タスク切換えウィンドウが出てないなら
                 pg.hotkey('ctrl', 'alt', 'tab')  # タスク切換え
 
@@ -109,13 +113,11 @@ def on_scroll(x, y, dx, dy) -> None:
 
         # 選択文字列でプライベート検索
         elif (x > RIGHT_RANGE) and (y > BOTTOM_RANGE):  # カーソルが➘
-            if wheel >= 4:
-                pg.hotkey('ctrl', 'c')
-                args = "microsoft-edge:https://www.google.co.jp/search?q=" + get_Clip()
-                run([PATH_TO_EDGE, "--inprivate", args])
-                wheel = 0
-            else:
-                wheel += 1
+            pg.hotkey('ctrl', 'c')
+            args = "microsoft-edge:https://www.google.co.jp/search?q=" + get_Clip()
+            run([PATH_TO_EDGE, "--inprivate", args])
+
+    pre_time = time()
     return
 
 
