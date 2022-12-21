@@ -1,6 +1,6 @@
 import subprocess
 import re
-from platform import system
+from platform import system, uname
 import sys
 import os
 from shutil import copy
@@ -97,6 +97,7 @@ with open(".\\StartMouScroll.xml", 'r', encoding='utf-16-le') as f:
 
 with open(".\\StartMouScroll_cp.xml", 'w+', encoding='utf-16-le') as f:
     body = text.replace("<Author></Author>", f"<Author>{HOSTNAME}</Author>")
+    body = body.replace("<UserId>XXX</UserId>", f"<UserId>{uname()[1]}\\{getpass.getuser()}</UserId>")
     body = body.replace("<UserId></UserId>", f"<UserId>{SID}</UserId>")
     body = body.replace("<Command></Command>", f"<Command>{INSTALL_PATH+'MouScroll.pyw'}</Command>")
     f.write(body)
