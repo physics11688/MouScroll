@@ -1,7 +1,6 @@
 import subprocess
 import re
 from platform import system, uname
-import sys
 import os
 from shutil import copy
 
@@ -44,7 +43,7 @@ msg = """これはMouScroll.pyのインストールスクリプトです。
 
 2. ホームディレクトリ直下に local\\bin\\MouScroll フォルダを作り、スクリプト MouScroll.pyw を突っ込む
 
-
+3. タスクスケジューラで 2. をログイン時自動起動に設定
 
 """
 
@@ -77,7 +76,7 @@ if " " in HOME:
 INSTALL_PATH = HOME + "\\local\\bin\\"
 os.makedirs(INSTALL_PATH, exist_ok=True)
 
-print(f"\nMouScroll.py コピー先: {INSTALL_PATH}")
+print(f"\nMouScroll.py コピー先: {INSTALL_PATH}MouScroll.pyw")
 copy('MouScroll.pyw', INSTALL_PATH)
 
 # ---------------- 自動起動設定(タスクスケジューラ) ---------------- #
@@ -95,6 +94,7 @@ SID = output_str.replace("SID", "").replace(" ", "").replace("\n", "")
 with open(".\\StartMouScroll.xml", 'r', encoding='utf-16-le') as f:
     text = f.read()
 
+# xmlファイルに必要事項を設定
 with open(".\\StartMouScroll_cp.xml", 'w+', encoding='utf-16-le') as f:
     body = text.replace("<Author></Author>", f"<Author>{HOSTNAME}</Author>")
     body = body.replace("<UserId>XXX</UserId>", f"<UserId>{uname()[1]}\\{getpass.getuser()}</UserId>")
@@ -107,16 +107,24 @@ PATH_TO_POWERSHELL = "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell
 os.environ['COMSPEC'] = PATH_TO_POWERSHELL
 
 # 管理者で schtasks の実行
-path_to_XML = os.path.dirname(__file__) + "\\StartMouScroll_cp.xml"
-cmd = [
-    "Start-Process",
-    "schtasks.exe",
-    "-Verb",
-    "RunAs",
-    "-WindowStyle",
-    "Hidden",
-    "-ArgumentList",
-    f'"/Create /TN StartMouScroll /XML {path_to_XML}"'  # 新しくプロセス起動してるので絶対パス
-]
+try:
+    path_to_XML = os.path.dirname(__file__) + "\\StartMouScroll_cp.xml"
+    cmd = [
+        "Start-Process",
+        "schtasks.exe",
+        "-Verb",
+        "RunAs",
+        "-WindowStyle",
+        "Hidden",
+        "-ArgumentList",
+        f'"/Create /TN StartMouScroll /XML {path_to_XML} /F"',  # 新しくプロセス起動してるので絶対パス
+    ]
+    subprocess.run(cmd, shell=True)
 
-subprocess.run(cmd, shell=True)
+    # 再インストール・アップデート用. 再起動
+    cmds = [["schtasks.exe", "/end", "/tn StartMouScroll"], ["schtasks.exe", "/run", "/tn", "StartMouScroll"]]
+    for cmd in cmds:
+        subprocess.run(cmd, shell=True)
+    color_print(36, "\nセットアップが完了しました.\n")
+except:
+    print("タスクスケジューラの設定に失敗しました.")
