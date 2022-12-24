@@ -102,6 +102,12 @@ $ python3 uninstall.py
 
 ![demo](./pic/demo.gif)
 
+<br>
+
+### 追加機能
+
+![pic2](./pic/pic2.svg)
+
 
 <br>
 

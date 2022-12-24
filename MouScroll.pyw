@@ -17,6 +17,8 @@ LEFT_RANGE = int(pg.size().width * 5 / 100)  # 画面左側5%
 RIGHT_RANGE = int(pg.size().width * 95 / 100)  # 画面右側5%
 TOP_RANGE = int(pg.size().height * 5 / 100)  # 画面上側5%
 BOTTOM_RANGE = int(pg.size().height * 95 / 100)  # 画面下側5%
+X_MIDDLE_RANGE = {'LEFT': int(pg.size().width * 40 / 100), 'RIGHT': int(pg.size().width * 60 / 100)}
+Y_MIDDLE_RANGE = {'TOP': int(pg.size().height * 40 / 100), 'BOTTOM': int(pg.size().height * 60 / 100)}
 
 # https://pyautogui.readthedocs.io/en/latest/mouse.html
 # 0,0       X increases -->
@@ -89,6 +91,10 @@ def on_scroll(x, y, dx, dy) -> None:
             pg.hotkey('ctrl', 'c')
             args = "microsoft-edge:https://www.google.co.jp/search?q=" + get_Clip()
             run([PATH_TO_EDGE, args])
+        elif (X_MIDDLE_RANGE['LEFT'] < x < X_MIDDLE_RANGE['RIGHT']) and (y > BOTTOM_RANGE):
+            pg.press('volumemute')
+        elif (x < LEFT_RANGE) and (Y_MIDDLE_RANGE['TOP'] < y < Y_MIDDLE_RANGE['BOTTOM']):
+            pg.press('browserback')
 
     # 上にスクロール
     else:
@@ -111,11 +117,16 @@ def on_scroll(x, y, dx, dy) -> None:
             if gw.getActiveWindow().title == "":
                 pg.hotkey('win', 'd')  # 同時押し
 
-        # 選択文字列でプライベート検索
+        # 選択文字列でプライベート検索中野五番のボタンすごい行きやすいこれいい
         elif (x > RIGHT_RANGE) and (y > BOTTOM_RANGE):  # カーソルが➘
             pg.hotkey('ctrl', 'c')
             args = "microsoft-edge:https://www.google.co.jp/search?q=" + get_Clip()
             run([PATH_TO_EDGE, "--inprivate", args])
+
+        elif (X_MIDDLE_RANGE['LEFT'] < x < X_MIDDLE_RANGE['RIGHT']) and (y < TOP_RANGE):
+            pg.hotkey('win', 'shift', 's')  # スクショ
+        elif (x < LEFT_RANGE) and (Y_MIDDLE_RANGE['TOP'] < y < Y_MIDDLE_RANGE['BOTTOM']):
+            pg.press('browserforward')
 
     pre_time = time()
     return
