@@ -3,6 +3,7 @@ import re
 from platform import system, uname
 import os
 from shutil import copy
+import sys
 
 
 def color_print(color: int, text: str, is_bold=False, end="\n") -> None:
@@ -50,7 +51,7 @@ msg = """これはMouScroll.pyのインストールスクリプトです。
 print(msg)
 
 # OSの確認
-if system() != 'Windows':
+if system() != "Windows":
     print("MouScrollは Windowsのみ使用可能です")
     print("プログラムを終了します")
     exit(2)
@@ -61,7 +62,9 @@ if not YorN():
     exit(1)
 
 try:
-    subprocess.run(["pip", "install", "-U", "pynput", "pywin32", "pyautogui", "pygetwindow"])
+    subprocess.run(
+        ["pip", "install", "-U", "pynput", "pywin32", "pyautogui", "pygetwindow"]
+    )
 except:
     print("モジュールのインストールに失敗しました")
     print("プログラムを終了します")
@@ -77,7 +80,7 @@ INSTALL_PATH = HOME + "\\local\\bin\\"
 os.makedirs(INSTALL_PATH, exist_ok=True)
 
 print(f"\nMouScroll.py コピー先: {INSTALL_PATH}MouScroll.pyw")
-copy('MouScroll.pyw', INSTALL_PATH)
+copy("MouScroll.pyw", INSTALL_PATH)
 
 # ---------------- 自動起動設定(タスクスケジューラ) ---------------- #
 from socket import gethostname
@@ -91,20 +94,26 @@ cmd = f'wmic useraccount where name="{getpass.getuser()}" get sid'
 output_str = subprocess.run(cmd, capture_output=True, text=True).stdout
 SID = output_str.replace("SID", "").replace(" ", "").replace("\n", "")
 
-with open(".\\StartMouScroll.xml", 'r', encoding='utf-16-le') as f:
+with open(".\\StartMouScroll.xml", "r", encoding="utf-16-le") as f:
     text = f.read()
 
 # xmlファイルに必要事項を設定
-with open(".\\StartMouScroll_cp.xml", 'w+', encoding='utf-16-le') as f:
+with open(".\\StartMouScroll_cp.xml", "w+", encoding="utf-16-le") as f:
     body = text.replace("<Author></Author>", f"<Author>{HOSTNAME}</Author>")
-    body = body.replace("<UserId>XXX</UserId>", f"<UserId>{uname()[1]}\\{getpass.getuser()}</UserId>")
+    body = body.replace(
+        "<UserId>XXX</UserId>", f"<UserId>{uname()[1]}\\{getpass.getuser()}</UserId>"
+    )
     body = body.replace("<UserId>YYY</UserId>", f"<UserId>{SID}</UserId>")
-    body = body.replace("<Command></Command>", f"<Command>{INSTALL_PATH+'MouScroll.pyw'}</Command>")
+    body = body.replace("<Command></Command>", f"<Command>{sys.executable.replace("python.exe", "pythonw.exe")}</Command>")
+    body = body.replace(
+        "<Arguments></Arguments>",
+        f"<Arguments>{INSTALL_PATH+'MouScroll.pyw'}</Arguments>",
+    )
     f.write(body)
 # プリインストールの PowerShell
 PATH_TO_POWERSHELL = "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
 # subprocessはPowerShellで実行
-os.environ['COMSPEC'] = PATH_TO_POWERSHELL
+os.environ["COMSPEC"] = PATH_TO_POWERSHELL
 
 # 管理者で schtasks の実行
 try:
@@ -122,7 +131,10 @@ try:
     subprocess.run(cmd, shell=True)
 
     # 再インストール・アップデート用. 再起動
-    cmds = [["schtasks.exe", "/end", "/tn StartMouScroll"], ["schtasks.exe", "/run", "/tn", "StartMouScroll"]]
+    cmds = [
+        ["schtasks.exe", "/end", "/tn StartMouScroll"],
+        ["schtasks.exe", "/run", "/tn", "StartMouScroll"],
+    ]
     for cmd in cmds:
         subprocess.run(cmd, shell=True)
     color_print(36, "\nセットアップが完了しました.\n")
