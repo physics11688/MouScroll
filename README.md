@@ -92,7 +92,7 @@ $ python3 uninstall.py
 
 <br>
 
-↑ の感じを変更したい場合は [MouScroll.pyw](./MouScroll.pyw)の変数 `TIME_IV` を調整してください.
+↑ の感じを変更したい場合は [MouScroll.pyw](./MouScroll.pyw)の20行目付近の変数 `TIME_IV` を調整してください.
 
 <br>
 
@@ -104,10 +104,24 @@ $ python3 uninstall.py
 
 <br>
 
-### 追加機能
+### 追加機能1
 
 ![pic2](./pic/pic2.svg)
 
+### 追加機能2
+
+勢いよくマウスポインタを画面両端に移動させると, 仮想デスクトップが切り替わります.
+
+↑ の感じを変更したい場合は [MouScroll.pyw](./MouScroll.pyw)の20行目付近の
+
+- 変数 `POINTER_SPEED`   (マウスの性能, つまりDPIが大きいほどこの値を小さくします)
+- 変数 `CNT_SPEED`       (マウスの性能, つまりDPIが大きいほどこの値を大きくします.最大10です.)
+
+を調整してください.
+
+<br>
+
+![pic3](./pic/pic3.gif)
 
 <br>
 
@@ -117,7 +131,7 @@ $ python3 uninstall.py
 XMLファイルのインポートです.
 
 ```powershell
-> schtasks.exe /Create /TN StartMouScroll /XML StartMouScroll.xml 
+> schtasks.exe /Create /TN StartMouScroll /XML StartMouScroll.xml
 ```
 
 
