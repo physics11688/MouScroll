@@ -65,6 +65,11 @@ def get_Clip() -> str:
 
 
 def rewrite(keyword):
+    # 新しいファイルエクスプローラの仕様対策
+    if " とその他" in keyword:
+        keyword = keyword[: keyword.find(" とその他")]
+    elif " - エクスプローラー" in keyword:
+        keyword = keyword[: keyword.find(" - エクスプローラー")]
     # ドキュメントを選択してるとウィンドウタイトルが日本語
     keyword = (
         keyword.replace("ミュージック", "Music")
@@ -101,6 +106,12 @@ def rewrite(keyword):
         keyword = expanduser("~") + "\\" + keyword
         if not Path(keyword).exists():
             keyword = expanduser("~") + "\\OneDrive\\" + keyword
+
+    # デスクトップ使用中
+    if keyword == "Program Manager":
+        keyword = expanduser("~") + "\\" + "Desktop"
+        if not Path(keyword).exists():
+            keyword = expanduser("~") + "\\OneDrive\\" + "Desktop"
 
     return keyword
 
@@ -187,10 +198,12 @@ def on_scroll(x, y, dx, dy) -> None:
 
         # アプリの表示
         elif (x < LEFT_RANGE) and (y > BOTTOM_RANGE):  # カーソルが ↙
-            # アクティブウィンドウないならタスク表示
-            if gw.getActiveWindow().title == "":
+            # アクティブウィンドウがないなら
+            current_HWND = gw.getActiveWindow()
+            if (current_HWND is None) or (current_HWND.title == ""):
+                pass
+            else:  # あるならデスクトップ表示
                 pg.hotkey("win", "d")  # 同時押し
-
         # 選択文字列でプライベート検索
         elif (x > RIGHT_RANGE) and (y > BOTTOM_RANGE):  # カーソルが➘
             pg.hotkey("ctrl", "c")
@@ -210,11 +223,7 @@ def on_scroll(x, y, dx, dy) -> None:
             path = rewrite(gw.getActiveWindow().title)
             if Path(path).exists():
                 run(
-                    [
-                        "wt.exe",
-                        "-d",
-                        rewrite(f"{path}"),
-                    ],
+                    ["wt.exe", "-d", rewrite(f"{path}"), "pwsh.exe"],
                     shell=True,
                 )
 
@@ -265,5 +274,7 @@ with mouse.Listener(on_move=move, on_scroll=on_scroll, on_click=on_click) as lis
     except Exception as e:
         # 例外吐いたら一応知らせる
         pg.alert(
-            text=f"例外が発生したため、MouScroll.pyを終了しました.\n{e}", title="MouScroll", button="OK"
+            text=f"例外が発生したため、MouScroll.pyを終了しました.\n{e}",
+            title="MouScroll",
+            button="OK",
         )
