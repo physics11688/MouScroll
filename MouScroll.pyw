@@ -27,6 +27,8 @@ LEFT_RANGE = int(pg.size().width * 5 / 100)  # 画面左側5%
 RIGHT_RANGE = int(pg.size().width * 95 / 100)  # 画面右側5%
 TOP_RANGE = int(pg.size().height * 5 / 100)  # 画面上側5%
 BOTTOM_RANGE = int(pg.size().height * 95 / 100)  # 画面下側5%
+TOP_RANGE20 = int(pg.size().height * 20 / 100)  # 画面上側20%
+BOTTOM_RANGE20 = int(pg.size().height * 80 / 100)  # 画面下側20%
 X_MIDDLE_RANGE = {
     "LEFT": int(pg.size().width * 40 / 100),
     "RIGHT": int(pg.size().width * 60 / 100),
@@ -150,7 +152,11 @@ def on_scroll(x, y, dx, dy) -> None:
         elif (x < LEFT_RANGE) and (y > BOTTOM_RANGE):  # カーソルが ↙
             # アクティブウィンドウがないなら
             current_HWND = gw.getActiveWindow()
-            if (current_HWND is None) or (current_HWND.title == ""):
+            if (
+                (current_HWND is None)
+                or (current_HWND.title == "")
+                or (current_HWND.title == "Program Manager")
+            ):
                 pass
             else:  # あるならデスクトップ表示
                 pg.hotkey("win", "d")  # 同時押し
@@ -200,10 +206,14 @@ def on_scroll(x, y, dx, dy) -> None:
         elif (x < LEFT_RANGE) and (y > BOTTOM_RANGE):  # カーソルが ↙
             # アクティブウィンドウがないなら
             current_HWND = gw.getActiveWindow()
-            if (current_HWND is None) or (current_HWND.title == ""):
-                pass
-            else:  # あるならデスクトップ表示
+            if (
+                (current_HWND is None)
+                or (current_HWND.title == "")
+                or (current_HWND.title == "Program Manager")
+            ):  # e.x. <Win32Window left="0", top="0", width="1920", height="1080", title="Program Manager">
                 pg.hotkey("win", "d")  # 同時押し
+            else:  # あるならデスクトップ表示
+                pass
         # 選択文字列でプライベート検索
         elif (x > RIGHT_RANGE) and (y > BOTTOM_RANGE):  # カーソルが➘
             pg.hotkey("ctrl", "c")
@@ -248,7 +258,7 @@ def move(x, y):
 
     global x_pointer
     x_pointer = x_pointer[1:] + [x]
-    if (LEFT_RANGE < x < RIGHT_RANGE) or not (TOP_RANGE < y < BOTTOM_RANGE):
+    if (LEFT_RANGE < x < RIGHT_RANGE) or not (TOP_RANGE20 < y < BOTTOM_RANGE20):
         return
 
     s_list = [x_pointer[i + 1] - x_pointer[i] for i in range(len(x_pointer) - 1)]
